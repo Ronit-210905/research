@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Portal - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px 30px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: ripple 3s ease-in-out infinite;
+        }
+
+        @keyframes ripple {
+            0%, 100% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.1; }
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-header p {
+            color: #bdc3c7;
+            font-size: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-container {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .form-toggle {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .toggle-link {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-link:hover {
+            color: #2980b9;
+            text-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+        }
+
+        .form-section {
+            display: none;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .error-message,
+        .success-message {
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            border-left: 4px solid #c33;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #3a3;
+            border-left: 4px solid #3a3;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading .btn::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            display: inline-block;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 10px;
+            }
+            
+            .login-header {
+                padding: 30px 20px 20px;
+            }
+            
+            .form-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Research Portal</h1>
+            <p>Welcome to your research management system</p>
+        </div>
+
+        <div class="form-container">
+            <!-- Login Form -->
+            <div class="form-section active" id="loginForm">
+                <div id="loginMessage"></div>
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" name="password" required>
+                    </div>
+                    <button type="submit" class="btn" id="loginBtn">Sign In</button>
+                </form>
+                <div class="form-toggle">
+                    <span>Don't have an account? </span>
+                    <a href="#" class="toggle-link" id="showRegister">Create Account</a>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div class="form-section" id="registerForm">
+                <div id="registerMessage"></div>
+                <form id="registerFormElement">
+                    <div class="form-group">
+                        <label for="registerName">Full Name</label>
+                        <input type="text" id="registerName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" name="password" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn" id="registerBtn">Create Account</button>
+                </form>
+                <div class="form-toggle">
+                    <span>Already have an account? </span>
+                    <a href="#" class="toggle-link" id="showLogin">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // In-memory storage for user data (simulating backend)
+        let users = JSON.parse(localStorage.getItem('researchPortalUsers') || '[]');
+        let currentUser = null;
+
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const showRegisterBtn = document.getElementById('showRegister');
+        const showLoginBtn = document.getElementById('showLogin');
+        const loginFormElement = document.getElementById('loginFormElement');
+        const registerFormElement = document.getElementById('registerFormElement');
+        const loginMessage = document.getElementById('loginMessage');
+        const registerMessage = document.getElementById('registerMessage');
+
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const loggedInUser = sessionStorage.getItem('researchPortalCurrentUser');
+            if (loggedInUser) {
+                redirectToDashboard();
+            }
+        });
+
+        // Form toggle functionality
+        showRegisterBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleForms('register');
+        });
+
+        showLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleForms('login');
+        });
+
+        function toggleForms(formType) {
+            if (formType === 'register') {
+                loginForm.classList.remove('active');
+                registerForm.classList.add('active');
+            } else {
+                registerForm.classList.remove('active');
+                loginForm.classList.add('active');
+            }
+            clearMessages();
+        }
+
+        // Registration functionality
+        registerFormElement.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleRegistration();
+        });
+
+        function handleRegistration() {
+            const formData = new FormData(registerFormElement);
+            const userData = {
+                name: formData.get('name').trim(),
+                email: formData.get('email').trim().toLowerCase(),
+                password: formData.get('password')
+            };
+            const confirmPassword = formData.get('confirmPassword');
+
+            // Validation
+            if (!validateRegistration(userData, confirmPassword)) {
+                return;
+            }
+
+            // Check if user already exists
+            if (users.find(user => user.email === userData.email)) {
+                showMessage(registerMessage, 'User with this email already exists!', 'error');
+                return;
+            }
+
+            // Add loading state
+            setLoadingState(document.getElementById('registerBtn'), true);
+
+            // Simulate API call
+            setTimeout(() => {
+                // Save user
+                users.push({
+                    id: Date.now(),
+                    ...userData,
+                    createdAt: new Date().toISOString()
+                });
+                localStorage.setItem('researchPortalUsers', JSON.stringify(users));
+
+                showMessage(registerMessage, 'Account created successfully! Please login.', 'success');
+                
+                // Clear form and switch to login
+                registerFormElement.reset();
+                setTimeout(() => {
+                    toggleForms('login');
+                    setLoadingState(document.getElementById('registerBtn'), false);
+                }, 2000);
+            }, 1000);
+        }
+
+        function validateRegistration(userData, confirmPassword) {
+            if (!userData.name || userData.name.length < 2) {
+                showMessage(registerMessage, 'Please enter a valid full name (at least 2 characters).', 'error');
+                return false;
+            }
+
+            if (!userData.email || !isValidEmail(userData.email)) {
+                showMessage(registerMessage, 'Please enter a valid email address.', 'error');
+                return false;
+            }
+
+            if (!userData.password || userData.password.length < 6) {
+                showMessage(registerMessage, 'Password must be at least 6 characters long.', 'error');
+                return false;
+            }
+
+            if (userData.password !== confirmPassword) {
+                showMessage(registerMessage, 'Passwords do not match.', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Login functionality
+        loginFormElement.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleLogin();
+        });
+
+        function handleLogin() {
+            const formData = new FormData(loginFormElement);
+            const credentials = {
+                email: formData.get('email').trim().toLowerCase(),
+                password: formData.get('password')
+            };
+
+            // Validation
+            if (!credentials.email || !credentials.password) {
+                showMessage(loginMessage, 'Please enter both email and password.', 'error');
+                return;
+            }
+
+            // Add loading state
+            setLoadingState(document.getElementById('loginBtn'), true);
+
+            // Simulate API call
+            setTimeout(() => {
+                // Find user
+                const user = users.find(u => u.email === credentials.email && u.password === credentials.password);
+
+                if (user) {
+                    // Successful login
+                    currentUser = user;
+                    sessionStorage.setItem('researchPortalCurrentUser', JSON.stringify(user));
+                    
+                    showMessage(loginMessage, 'Login successful! Redirecting...', 'success');
+                    
+                    setTimeout(() => {
+                        redirectToDashboard();
+                    }, 1500);
+                } else {
+                    showMessage(loginMessage, 'Invalid email or password. Please try again.', 'error');
+                    setLoadingState(document.getElementById('loginBtn'), false);
+                }
+            }, 1000);
+        }
+
+        // Utility functions
+        function showMessage(container, message, type) {
+            container.innerHTML = `<div class="${type}-message">${message}</div>`;
+        }
+
+        function clearMessages() {
+            loginMessage.innerHTML = '';
+            registerMessage.innerHTML = '';
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function setLoadingState(button, isLoading) {
+            if (isLoading) {
+                button.classList.add('loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+
+        function redirectToDashboard() {
+            // In a real application, you would redirect to your actual dashboard URL
+            // For this example, we'll redirect to index.html
+            window.location.href = 'index.html';
+        }
+
+        // Add some demo users for testing (you can remove this in production)
+        if (users.length === 0) {
+            const demoUsers = [
+                {
+                    id: 1,
+                    name: 'Dr. Rao Kumar',
+                    email: 'rao@university.edu',
+                    password: 'password123',
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 2,
+                    name: 'Dr. Sarah Johnson',
+                    email: 'sarah@university.edu',
+                    password: 'password123',
+                    createdAt: new Date().toISOString()
+                }
+            ];
+            users = demoUsers;
+            localStorage.setItem('researchPortalUsers', JSON.stringify(users));
+        }
+
+        // Add logout functionality to be used by the main dashboard
+        window.researchPortalLogout = function() {
+            sessionStorage.removeItem('researchPortalCurrentUser');
+            localStorage.removeItem('researchPortalUsers'); // Optional: remove this line in production
+            window.location.href = 'login.html'; // Adjust the filename as needed
+        };
+    </script>
+</body>
+</html>
